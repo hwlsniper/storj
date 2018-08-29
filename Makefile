@@ -108,7 +108,7 @@ test-captplanet-docker:
 test-docker:
 	docker-compose up -d --remove-orphans test
 	docker-compose run test make test
-	[ -z "$$COVERALLS_TOKEN" ] || goveralls -coverprofile=gover.coverprofile
+	[ -z "$$COVERALLS_TOKEN" ] && echo "Skipping submission to coveralls.io" || goveralls -coverprofile=gover.coverprofile
 
 test-docker-clean:
 	-docker-compose down --rmi all
