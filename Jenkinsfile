@@ -1,3 +1,6 @@
+environment {
+  COVERALLS_TOKEN = credentials('COVERALLS_TOKEN')
+}
 node('node') {
   try {
     currentBuild.result = "SUCCESS"
