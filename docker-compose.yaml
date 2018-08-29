@@ -5,6 +5,8 @@ services:
       context: .
       dockerfile: test/Dockerfile
     network_mode: service:test-redis
+    volumes:
+    - $PWD:/host
   test-redis:
     image: redis
 

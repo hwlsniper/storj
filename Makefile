@@ -92,16 +92,23 @@ build-dev-deps:
 test: lint
 	go install -v ./...
 	go test -race -v -covermode=atomic -coverprofile=coverage.out ./...
+	go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' ./... | xargs -L 1 sh -c
 	gover
+	[ ! -d /host ] || cp gover.coverprofile /host
 	@echo done
 
 test-captplanet:
 	@echo "Running ${@}"
 	@./scripts/test-captplanet.sh
 
+test-captplanet-docker:
+	docker-compose up -d --remove-orphans test
+	docker-compose run test ./scripts/test-captplanet.sh
+
 test-docker:
 	docker-compose up -d --remove-orphans test
 	docker-compose run test make test
+	[ -z "$$COVERALLS_TOKEN" ] || goveralls -coverprofile=gover.coverprofile
 
 test-docker-clean:
 	-docker-compose down --rmi all
