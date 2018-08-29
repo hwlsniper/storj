@@ -1,7 +1,4 @@
 node('node') {
-  environment {
-    COVERALLS_TOKEN = credentials('COVERALLS_TOKEN')
-  }
   try {
     currentBuild.result = "SUCCESS"
 
@@ -12,7 +9,12 @@ node('node') {
     }
 
     stage('Build Images') {
-      sh 'make test-docker test-captplanet-docker images'
+      environment {
+        COVERALLS_TOKEN = credentials('COVERALLS_TOKEN')
+      }
+      sh 'make test-docker'
+      sh 'make test-captplanet-docker'
+      sh 'make images'
 
       echo "Current build result: ${currentBuild.result}"
     }
