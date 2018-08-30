@@ -9,8 +9,6 @@ pipeline {
         sh 'make test-docker'
         sh 'make test-captplanet-docker'
         sh 'make images'
-
-        echo "Current build result: ${currentBuild.result}"
       }
     }
 
@@ -27,7 +25,6 @@ pipeline {
       steps {
         echo 'Push to Repo'
         sh 'make push-images'
-        echo "Current build result: ${currentBuild.result}"
       }
     }
 
@@ -38,7 +35,6 @@ pipeline {
       }
       steps {
         sh 'make deploy'
-        echo "Current build result: ${currentBuild.result}"
       }
     }
 
@@ -49,7 +45,7 @@ pipeline {
     }
     cleanup {
       sh 'make test-docker-clean clean-images'
-      deleteDir()
+      cleanWS()
     }
   }
 }
