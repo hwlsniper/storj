@@ -8,7 +8,7 @@ services:
     environment:
     - COVERALLS_TOKEN
     - BRANCH_NAME
-    - CHANGE_ID
+    - PULL_REQUEST_NUMBER=${CHANGE_ID}
     - BUILD_NUMBER
   test-redis:
     image: redis
