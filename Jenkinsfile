@@ -10,7 +10,7 @@ node('node') {
 
     stage('Build Images') {
       environment {
-        COVERALLS_TOKEN = credentials('coveralls-token')
+        COVERALLS_TOKEN = "not-a-token"
       }
       sh 'make test-docker'
       sh 'make test-captplanet-docker'
