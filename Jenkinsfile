@@ -1,24 +1,23 @@
-node('node') {
-  try {
-    currentBuild.result = "SUCCESS"
+pipeline {
+  agent any
+  stages {
+    try {
+      currentBuild.result = "SUCCESS"
 
-    stage('Checkout') {
-      checkout scm
+      stage('Checkout') {
+        checkout scm
 
-      echo "Current build result: ${currentBuild.result}"
-    }
-
-    stage('Build Images') {
-      environment {
-        COVERALLS_TOKEN = "not-a-token"
+        echo "Current build result: ${currentBuild.result}"
       }
-      sh 'printenv | sort > /tmp/env'
-      sh 'make test-docker'
-      sh 'make test-captplanet-docker'
-      sh 'make images'
 
-      echo "Current build result: ${currentBuild.result}"
-    }
+      stage('Build Images') {
+        environment {
+          COVERALLS_TOKEN = "not-a-token"
+        }
+        sh 'printenv | sort > /tmp/env'
+        sh 'make test-docker'
+        sh 'make test-captplanet-docker'
+        sh 'make images'
 
     stage('Build Binaries') {
       sh 'make binaries'
@@ -39,31 +38,31 @@ node('node') {
         sh 'make binaries-upload'
         echo "Current build result: ${currentBuild.result}"
       }
+
     }
+    catch (err) {
+      echo "Caught errors! ${err}"
+      echo "Setting build result to FAILURE"
+      currentBuild.result = "FAILURE"
 
-  }
-  catch (err) {
-    echo "Caught errors! ${err}"
-    echo "Setting build result to FAILURE"
-    currentBuild.result = "FAILURE"
+      /*
+      mail body: "project build error is here: ${env.BUILD_URL}" ,
+        from: 'build@storj.io',
+        replyTo: 'build@storj.io',
+        subject: 'project build failed',
+        to: "${env.CHANGE_AUTHOR_EMAIL}"
 
-    /*
-    mail body: "project build error is here: ${env.BUILD_URL}" ,
-      from: 'build@storj.io',
-      replyTo: 'build@storj.io',
-      subject: 'project build failed',
-      to: "${env.CHANGE_AUTHOR_EMAIL}"
+        throw err
+      */
 
-      throw err
-    */
-
-  }
-  finally {
-
-    stage('Cleanup') {
-      sh 'make test-docker-clean clean-images'
-      deleteDir()
     }
+    finally {
 
+      stage('Cleanup') {
+        sh 'make test-docker-clean clean-images'
+        deleteDir()
+      }
+
+    }
   }
 }
