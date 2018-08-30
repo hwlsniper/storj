@@ -1,20 +1,11 @@
 pipeline {
   agent any
   stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-
-        echo "Current build result: ${currentBuild.result}"
-      }
-    }
-
     stage('Build Images') {
       environment {
-        COVERALLS_TOKEN = "not-a-token"
+        COVERALLS_TOKEN = credentials('COVERALLS_TOKEN')
       }
       steps {
-        sh 'printenv | sort > /tmp/env'
         sh 'make test-docker'
         sh 'make test-captplanet-docker'
         sh 'make images'
