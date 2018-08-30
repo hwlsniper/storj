@@ -1,23 +1,25 @@
 pipeline {
   agent any
   stages {
-    try {
-      currentBuild.result = "SUCCESS"
+    currentBuild.result = "SUCCESS"
 
-      stage('Checkout') {
-        checkout scm
+    stage('Checkout') {
+      checkout scm
 
-        echo "Current build result: ${currentBuild.result}"
+      echo "Current build result: ${currentBuild.result}"
+    }
+
+    stage('Build Images') {
+      environment {
+        COVERALLS_TOKEN = "not-a-token"
       }
+      sh 'printenv | sort > /tmp/env'
+      sh 'make test-docker'
+      sh 'make test-captplanet-docker'
+      sh 'make images'
 
-      stage('Build Images') {
-        environment {
-          COVERALLS_TOKEN = "not-a-token"
-        }
-        sh 'printenv | sort > /tmp/env'
-        sh 'make test-docker'
-        sh 'make test-captplanet-docker'
-        sh 'make images'
+      echo "Current build result: ${currentBuild.result}"
+    }
 
     stage('Build Binaries') {
       sh 'make binaries'
@@ -38,31 +40,18 @@ pipeline {
         sh 'make binaries-upload'
         echo "Current build result: ${currentBuild.result}"
       }
-
     }
-    catch (err) {
+
+  }
+  post {
+    error {
       echo "Caught errors! ${err}"
       echo "Setting build result to FAILURE"
       currentBuild.result = "FAILURE"
-
-      /*
-      mail body: "project build error is here: ${env.BUILD_URL}" ,
-        from: 'build@storj.io',
-        replyTo: 'build@storj.io',
-        subject: 'project build failed',
-        to: "${env.CHANGE_AUTHOR_EMAIL}"
-
-        throw err
-      */
-
     }
-    finally {
-
-      stage('Cleanup') {
-        sh 'make test-docker-clean clean-images'
-        deleteDir()
-      }
-
+    always {
+      sh 'make test-docker-clean clean-images'
+      deleteDir()
     }
   }
 }
