@@ -1,13 +1,17 @@
 pipeline {
   agent any
   stages {
-    stage('Build Images') {
+    stage('Test') {
       environment {
         COVERALLS_TOKEN = credentials('COVERALLS_TOKEN')
       }
       steps {
         sh 'make test-docker'
         sh 'make test-captplanet-docker'
+      }
+    }
+    stage('Build Images') {
+      steps {
         sh 'make images'
       }
     }
