@@ -33,9 +33,11 @@ pipeline {
       when {
         branch 'master'
       }
-      echo 'Push to Repo'
-      sh 'make push-images'
-      echo "Current build result: ${currentBuild.result}"
+      steps {
+        echo 'Push to Repo'
+        sh 'make push-images'
+        echo "Current build result: ${currentBuild.result}"
+      }
     }
 
     /* This should only deploy to staging if the branch is master */
@@ -43,8 +45,10 @@ pipeline {
       when {
         branch 'master'
       }
-      sh 'make deploy'
-      echo "Current build result: ${currentBuild.result}"
+      steps {
+        sh 'make deploy'
+        echo "Current build result: ${currentBuild.result}"
+      }
     }
 
   }
