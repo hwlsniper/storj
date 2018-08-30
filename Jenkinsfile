@@ -45,7 +45,7 @@ pipeline {
     }
     cleanup {
       sh 'make test-docker-clean clean-images'
-      cleanWS()
+      deleteDir()
     }
   }
 }
