@@ -57,7 +57,6 @@ pipeline {
       steps {
         echo "Caught errors! ${err}"
         echo "Setting build result to FAILURE"
-        currentBuild.result = "FAILURE"
       }
     }
     cleanup {
