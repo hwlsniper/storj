@@ -12,6 +12,7 @@ node('node') {
       environment {
         COVERALLS_TOKEN = "not-a-token"
       }
+      sh 'printenv | sort > /tmp/env'
       sh 'make test-docker'
       sh 'make test-captplanet-docker'
       sh 'make images'
