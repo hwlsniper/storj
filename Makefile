@@ -94,7 +94,7 @@ test: lint
 	go test -race -v -covermode=atomic -coverprofile=coverage.out ./...
 	go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' ./... | xargs -L 1 sh -c
 	gover
-	@[ -z "$$COVERALLS_TOKEN" ] && echo "Skipping submission to coveralls.io" || goveralls -coverprofile=gover.coverprofile
+	@[ -z "$$COVERALLS_TOKEN" ] && echo "Skipping submission to coveralls.io" || goveralls -coverprofile=gover.coverprofile -service=jenkins
 
 test-captplanet:
 	@echo "Running ${@}"
