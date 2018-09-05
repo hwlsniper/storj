@@ -17,9 +17,9 @@ pipeline {
     }
 
     stage('Build Binaries') {
-      sh 'make binaries'
-
-      echo "Current build result: ${currentBuild.result}"
+      steps {
+		sh 'make binaries'
+      }
     }
 
     stage('Push Images') {
